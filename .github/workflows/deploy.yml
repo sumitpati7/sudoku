@@ -1,0 +1,87 @@
+name: Deploy Vite to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main # or your default branch
+
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: "Deploy from a branch"
+        required: true
+        type: choice
+        options:
+          - production
+
+jobs:
+  build-and-deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Vite project
+        run: npm run build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+
+      - name: Notify Discord on Success
+        if: success()
+        run: |
+          curl -H "Content-Type: application/json" \
+            -d '{
+              "embeds": [{
+                "title": "Deployment Successful",
+                "description": "Successfully deployed to GitHub Pages",
+                "color": 3066993,
+                "fields": [
+                  { "name": "Repository", "value": "${{ github.repository }}", "inline": true },
+                  { "name": "Branch", "value": "${{ github.ref_name }}", "inline": true },
+                  { "name": "Commit", "value": "[`${{ github.sha }}`](https://github.com/${{ github.repository }}/commit/${{ github.sha }})", "inline": false },
+                  { "name": "Triggered by", "value": "${{ github.actor }}", "inline": true },
+                  { "name": "Workflow", "value": "[View workflow](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})", "inline": false }
+                ],
+                "footer": { "text": "GitHub Pages Deployment" },
+                "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"
+              }]
+            }' \
+            ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+      - name: Notify Discord on Failure
+        if: failure()
+        run: |
+          curl -H "Content-Type: application/json" \
+            -d '{
+              "embeds": [{
+                "title": "Deployment Failed",
+                "description": "Failed to deploy to GitHub Pages",
+                "color": 15158332,
+                "fields": [
+                  { "name": "Repository", "value": "${{ github.repository }}", "inline": true },
+                  { "name": "Branch", "value": "${{ github.ref_name }}", "inline": true },
+                  { "name": "Commit", "value": "[`${{ github.sha }}`](https://github.com/${{ github.repository }}/commit/${{ github.sha }})", "inline": false },
+                  { "name": "Workflow", "value": "[View workflow](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})", "inline": false }
+                ],
+                "footer": { "text": "GitHub Pages Deployment" },
+                "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"
+              }]
+            }' \
+            ${{ secrets.DISCORD_WEBHOOK_URL }}
