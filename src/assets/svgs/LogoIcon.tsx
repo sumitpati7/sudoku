@@ -1,6 +1,4 @@
-interface IconProps {
-  className?: string;
-}
+import type { IconProps } from "@interfaces/icon";
 
 export default function LogoIcon({ className = 'size-5' }: IconProps) {
   return (

@@ -1,6 +1,4 @@
-interface IconProps {
-  className?: string;
-}
+import { IconProps } from "@interfaces/icon";
 
 export default function SettingsIcon({ className = 'size-5' }: IconProps) {
   return (

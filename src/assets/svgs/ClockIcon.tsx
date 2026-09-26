@@ -1,6 +1,4 @@
-interface IconProps {
-  className?: string;
-}
+import { IconProps } from "@interfaces/icon";
 
 export default function ClockIcon({ className = 'size-4' }: IconProps) {
   return (
