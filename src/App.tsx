@@ -1,10 +1,13 @@
-import './App.css'
+import { Outlet, Link } from 'react-router'
 
-function App() {
-
+export default function App() {
   return (
-    <div className='text-3xl text-red-200'>Sudoku</div>
+    <div>
+      <nav className="flex gap-4 p-4">
+        <Link to="/">Home</Link>
+        <Link to="/about">About</Link>
+      </nav>
+      <Outlet />
+    </div>
   )
 }
-
-export default App
