@@ -1,9 +1,10 @@
+import { Difficulty } from '@interfaces/game';
 import ClockIcon from '@assets/svgs/ClockIcon';
 import LogoIcon from '@assets/svgs/LogoIcon';
 import SettingsIcon from '@assets/svgs/SettingsIcon';
 
 interface NavbarProps {
-  difficulty: 'Easy' | 'Medium' | 'Hard' | 'Expert';
+  difficulty: Difficulty;
   onDifficultyChange: (d: NavbarProps['difficulty']) => void;
   time: string;
   mistakes: number;
@@ -11,7 +12,7 @@ interface NavbarProps {
   onSettings: () => void;
 }
 
-const DIFFICULTIES: NavbarProps['difficulty'][] = ['Easy', 'Medium', 'Hard', 'Expert'];
+const DIFFICULTIES: Difficulty[] = ['Easy', 'Medium', 'Hard', 'Expert'];
 
 export default function Navbar({
   difficulty,
